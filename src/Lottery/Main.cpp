@@ -485,5 +485,5 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 #if USE_SKIN
     SkinH_Detach();
 #endif
-    return TRUE;
+    return 0;
 }
