@@ -1,6 +1,21 @@
 #include "Config.h"
 #include <Shlwapi.h>
+#include "ImportData.h"
 #pragma comment(lib, "shlwapi.lib")
+
+LPCTSTR GetExePath()
+{
+    if (gData.lpExePath == NULL)
+    {
+        gData.lpExePath = new TCHAR[MAX_PATH];
+        if (gData.lpExePath)
+        {
+            GetModuleFileName(GetModuleHandle(NULL), gData.lpExePath, MAX_PATH);
+            PathRemoveFileSpec(gData.lpExePath);
+        }
+    }
+    return gData.lpExePath;
+}
 
 // 读取保存配置 
 UINT GetConfig(LPCTSTR lpConfigName)

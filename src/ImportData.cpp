@@ -173,10 +173,12 @@ static unsigned int GetBookDatas(BookHandle ByReadXlsBook, int index, BookInfo &
 }
 
 // 解析excel文件 
-unsigned int ImportFromXls(const char* data, unsigned int uilen, Book &books)
+int ImportFromXls(const char* data, unsigned int uilen, Book &books)
 {
     unsigned int nCount = 0;
     BookHandle ByReadXlsBook;
+
+    books.clear();
     if ( !OpenXlsFile(data, uilen, ByReadXlsBook) )
     {
         return -1;
@@ -193,7 +195,11 @@ unsigned int ImportFromXls(const char* data, unsigned int uilen, Book &books)
 #endif
         BookInfo book;
         unsigned int nDatas = GetBookDatas(ByReadXlsBook, i, book);
-        books.push_back(book);
+        // 表中至少有一行标题，一行数据 
+        if (book.lines.size()>1)
+        {
+            books.push_back(book);
+        }
 #ifdef _DEBUG
         printf("获取到数据 %u 行\n", nDatas);
 #endif
@@ -202,6 +208,15 @@ unsigned int ImportFromXls(const char* data, unsigned int uilen, Book &books)
 
     xlBookRelease(ByReadXlsBook);
     return nCount;
+}
+
+LPTSTR GetStatusText()
+{
+    if (gData.lpStatusTxt == NULL)
+    {
+        gData.lpStatusTxt = new TCHAR[512];
+    }
+    return gData.lpStatusTxt;
 }
 
 //////////////////////////////////////////////////////////////////////////

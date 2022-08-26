@@ -45,11 +45,21 @@
 #define IDC_SHOW_ITEM8                  1208
 #define IDC_SHOW_ITEM9                  1209
 #define IDC_SHOW_ITEM10                 1210
+#define IDC_SHOW_ITEM11                 1211
+#define IDC_SHOW_ITEM12                 1212
+#define IDC_SHOW_ITEM13                 1213
+#define IDC_SHOW_ITEM14                 1214
+#define IDC_SHOW_ITEM15                 1215
+#define IDC_SHOW_ITEM16                 1216
+#define IDC_SHOW_ITEM17                 1217
+#define IDC_SHOW_ITEM18                 1218
 #define IDC_ROUND_COUNT                 1301
 #define IDC_EXTRACT                     1302
 #define IDC_IMPORT_DATA                 1401
-#define IDC_TOP_MOST                    1402
-#define IDC_TEXT_MSG                    1403
+#define IDC_SELECT_REPEAT               1402
+#define IDC_TOP_MOST                    1403
+#define IDC_TEXT_MSG                    1404
+#define WM_UPDATE_DLG                   (WM_USER+100)
 
 // Next default values for new objects
 // 

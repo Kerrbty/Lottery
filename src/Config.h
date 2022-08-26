@@ -3,6 +3,8 @@
 #include <windows.h>
 #include <tchar.h>
 
+LPCTSTR GetExePath();
+
 // 读取保存配置 
 UINT GetConfig(LPCTSTR lpConfigName);
 

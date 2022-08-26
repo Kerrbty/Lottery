@@ -1,5 +1,6 @@
 #include "DataBase.h"
 #include "zlib/zlib.h"
+#include "Config.h"
 
 #define DATA_BASE_FILE TEXT("Data.bin")
 
@@ -81,7 +82,13 @@ BOOL SaveFile2Database(LPTSTR lpFileName)
             if( compress(pobuf, &dwCompressLen, pibuf, len) == Z_OK)
             {
                 // ±£´æÎÄ¼þ 
-                bRet = WriteToFile(DATA_BASE_FILE, pobuf, dwCompressLen);
+                LPTSTR lpName = new TCHAR[MAX_PATH*2];
+                if (lpName)
+                {
+                    wsprintf(lpName, TEXT("%s\\") DATA_BASE_FILE, GetExePath());
+                    bRet = WriteToFile(lpName, pobuf, dwCompressLen);
+                    delete []lpName;
+                }
             }
             delete []pobuf;
         }
@@ -95,7 +102,15 @@ BOOL ReadDatabase(unsigned char** pb, unsigned int* size)
     BOOL bRet = FALSE;
     unsigned char* pibuf = NULL;
     unsigned int len = 0;
-    if (ReadFromFile(DATA_BASE_FILE, &pibuf, &len))
+
+    LPTSTR lpName = new TCHAR[MAX_PATH*2];
+    if (lpName == NULL)
+    {
+        return bRet;
+    }
+
+    wsprintf(lpName, TEXT("%s\\") DATA_BASE_FILE, GetExePath());
+    if (ReadFromFile(lpName, &pibuf, &len))
     {
         int n = 1;
         DWORD dwLen = len*2*n;
@@ -130,7 +145,14 @@ BOOL ReadDatabase(unsigned char** pb, unsigned int* size)
             }
         } while (TRUE);
         FreeData(pibuf);
-    }  
+
+        if (!bRet)
+        {
+            delete []pobuf;
+        }
+    } 
+
+    delete []lpName;
     return bRet;
 }
 
