@@ -183,7 +183,19 @@
 				>
 			</File>
 			<File
+				RelativePath=".\Lottery.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\Main.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\ResultDlg.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\SelectDlg.cpp"
 				>
 			</File>
 		</Filter>
@@ -204,12 +216,28 @@
 				RelativePath=".\ImportData.h"
 				>
 			</File>
+			<File
+				RelativePath=".\Lottery.h"
+				>
+			</File>
+			<File
+				RelativePath=".\ResultDlg.h"
+				>
+			</File>
+			<File
+				RelativePath=".\SelectDlg.h"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="资源文件"
 			Filter="rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav"
 			UniqueIdentifier="{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}"
 			>
+			<File
+				RelativePath=".\res\Lottery.rc"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="zlib"
