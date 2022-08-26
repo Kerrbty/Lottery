@@ -6,7 +6,7 @@
 #include "DataBase.h"
 #include "ImportData.h"
 
-#define USE_SKIN   1
+#define USE_SKIN   0
 #if USE_SKIN
 #include "SkinH/SkinH.h"
 #pragma comment(lib, "SkinH/SkinH.lib")
@@ -21,6 +21,7 @@ typedef struct {
     HWND hBookWnd[10];     // 各表格选择框 
     HWND hBookSetTextWnd[10];   // 各表格数量框前面的文本 
     HWND hBookSetCountWnd[10];  // 各表格数量选择框 
+    HWND hResultSelectGroupWnd;  // 结果列表选择宽文本 
     HWND hBookShowItemWnd[SHOWITEMS];  // 结果显示列 
     HWND hRoundCountWnd;   // 总选择组数 
 
@@ -37,10 +38,12 @@ DWORD WINAPI InitDataThread(LPVOID lparam)
     unsigned int len = 0;
     if (ReadDatabase(&pibuf, &len))
     {
+        
         memset(&gData.bSelect, 0, sizeof(gData.bSelect));
         memset(&gData.uiShowItems, 0, sizeof(gData.uiShowItems));
         memset(&gData.bShowItems, 0, sizeof(gData.bShowItems));
         gData.nShowItemCount = 0;
+        gData.dwResultCount = 0;
         if ( ImportFromXls((char*)pibuf, len, gData.book)> 0 && gData.book.size()>0) 
         {
             // 把公共的列名提取出来 
@@ -73,13 +76,16 @@ DWORD WINAPI InitDataThread(LPVOID lparam)
                 }
             }
             PostMessage(gFrame.hMainWnd, WM_UPDATE_DLG, 0, 0);
-            SetWindowText(gFrame.hStatusWnd, TEXT("数据加载完成!"));
         }
         FreeData(pibuf);
     }
     else
     {
         SetWindowText(gFrame.hStatusWnd, TEXT("数据加载错误,可能未设置数据 或者 数据已损坏\r\n请重新导入数据"));
+        if (MessageBox(gFrame.hMainWnd, TEXT("是否现在重新导入数据?"), TEXT("数据加载错误"), MB_YESNO|MB_ICONERROR) == IDYES)
+        {
+            PostMessage(gFrame.hMainWnd, WM_COMMAND, IDC_IMPORT_DATA, 0);
+        }
     }
     return 0;
 }
@@ -110,12 +116,17 @@ INT_PTR CALLBACK ProcWinMain(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
             for (unsigned int i=0; i<10; i++)
             {
                 gFrame.hBookWnd[i] = GetDlgItem(hWnd, IDC_BOOK1+i);
+                ShowWindow(gFrame.hBookWnd[i], FALSE);
                 gFrame.hBookSetTextWnd[i] = GetDlgItem(hWnd, IDC_TEXT_BOOK1+i*2);
+                ShowWindow(gFrame.hBookSetTextWnd[i], FALSE);
                 gFrame.hBookSetCountWnd[i] = GetDlgItem(hWnd, IDC_BOOK_COUNT1+i*2);
+                ShowWindow(gFrame.hBookSetCountWnd[i], FALSE);
             }
+            gFrame.hResultSelectGroupWnd = GetDlgItem(hWnd, IDC_RESULT_SELECT);
             for (unsigned int i=0; i<SHOWITEMS; i++)
             {
                 gFrame.hBookShowItemWnd[i] = GetDlgItem(hWnd, IDC_SHOW_ITEM1+i);
+                ShowWindow(gFrame.hBookShowItemWnd[i], FALSE);
             }
             gFrame.hRoundCountWnd = GetDlgItem(hWnd, IDC_ROUND_COUNT);
             gFrame.hTopMoustWnd = GetDlgItem(hWnd, IDC_TOP_MOST);
@@ -124,9 +135,9 @@ INT_PTR CALLBACK ProcWinMain(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
             // 居中显示 
             move_Middle(hWnd);
 
-            SetWindowText(gFrame.hSelectGroupWnd, TEXT("选择表(0/10)"));
+            SetWindowText(gFrame.hSelectGroupWnd, TEXT("选择表(0/0)"));
 
-            CreateThread(NULL, 0, InitDataThread, NULL, 0, NULL);
+            CloseHandle(CreateThread(NULL, 0, InitDataThread, NULL, 0, NULL));
             SetWindowText(gFrame.hStatusWnd, TEXT("正在加载数据..."));
         }
         break;
@@ -170,6 +181,18 @@ INT_PTR CALLBACK ProcWinMain(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
                         EnableWindow(gFrame.hBookSetTextWnd[index], FALSE);
                         EnableWindow(gFrame.hBookSetCountWnd[index], FALSE);
                     }
+
+                    unsigned int nCount = 0;
+                    for (int i=0; i<10; i++)
+                    {
+                        if (gData.bSelect[i])
+                        {
+                            nCount++;
+                        }
+                    }
+                    LPTSTR lpTmp = GetStatusText();
+                    swprintf(lpTmp, TEXT("选择表(%u/%u)"), nCount, gData.book.size());
+                    SetWindowText(gFrame.hSelectGroupWnd, lpTmp);
                 }
                 break;
             case IDC_SHOW_ITEM1: // 最后显示的数据列表选择 
@@ -194,12 +217,18 @@ INT_PTR CALLBACK ProcWinMain(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
                     int index = nCtrlId-IDC_SHOW_ITEM1;
                     if ( IsDlgButtonChecked(hWnd, nCtrlId) )
                     {
+                        gData.dwResultCount++;
                         gData.bShowItems[index] = TRUE;
                     }
                     else
                     {
+                        gData.dwResultCount--;
                         gData.bShowItems[index] = FALSE;
                     }
+
+                    LPTSTR lpTmp = GetStatusText();
+                    swprintf(lpTmp, TEXT("结果展示(%u)"), gData.dwResultCount);
+                    SetWindowText(gFrame.hResultSelectGroupWnd, lpTmp);
                 }
                 break;
             case IDC_TOP_MOST: // 顶端显示 
@@ -239,7 +268,7 @@ INT_PTR CALLBACK ProcWinMain(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
                     gData.ulRoundCount = GetDlgItemInt(hWnd, IDC_ROUND_COUNT, NULL, FALSE);
                     if (gData.ulRoundCount == 0)
                     {
-                        MessageBox(hWnd, _T("《抽取次数》设置错误，请重新设置"), _T("错误提示"), MB_OK);
+                        MessageBox(hWnd, _T("《抽取次数》设置错误，请重新设置"), _T("错误提示"), MB_OK|MB_ICONERROR);
                         bStopLottery = TRUE;
                     }
                     else
@@ -278,7 +307,7 @@ INT_PTR CALLBACK ProcWinMain(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
                                             gData.ulRoundCount,
                                             gData.ulBookCount[i],
                                             nLines);
-                                        if (MessageBox(hWnd, lpTmp, TEXT("设置错误"), MB_YESNO) == IDYES)
+                                        if (MessageBox(hWnd, lpTmp, TEXT("设置错误"), MB_YESNO|MB_ICONQUESTION) == IDYES)
                                         {
                                             bStopLottery = FALSE;
                                             gData.bRepeatRount = TRUE;
@@ -292,17 +321,9 @@ INT_PTR CALLBACK ProcWinMain(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
                         }
 
                         // 结果显示数据 
-                        int nCheckItems = 0;
-                        for(nCheckItems=0; nCheckItems<SHOWITEMS; nCheckItems++)
+                        if (gData.dwResultCount == 0)
                         {
-                            if (gData.bShowItems[nCheckItems])
-                            {
-                                break;
-                            }
-                        }
-                        if (nCheckItems == SHOWITEMS)
-                        {
-                            MessageBox(hWnd, _T("请选择合适的《结果展示》项"), _T("结果展示项未设置"), MB_OK);
+                            MessageBox(hWnd, _T("请选择合适的《结果展示》项"), _T("结果展示项未设置"), MB_OK|MB_ICONERROR);
                             bStopLottery = TRUE;
                         }
                     }
@@ -310,6 +331,53 @@ INT_PTR CALLBACK ProcWinMain(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
                     if (!bStopLottery)
                     {
                         // 抽奖 
+                    }
+                }
+                break;
+            case IDC_IMPORT_DATA:  // 导入excel表格 
+                {
+                    OPENFILENAME open_file_name;   
+                    LPTSTR lpfile = new TCHAR[MAX_PATH*2];  
+                    if (lpfile)
+                    {
+                        memset(lpfile, 0, MAX_PATH*2*sizeof(TCHAR)); // 必须清空，否则会出问题 
+                        // 初始化选择文件对话框。       
+                        ZeroMemory(&open_file_name, sizeof(OPENFILENAME));  
+                        open_file_name.lStructSize = sizeof(OPENFILENAME);  
+                        open_file_name.hwndOwner = hWnd;  
+                        open_file_name.lpstrFile = lpfile;  
+                        open_file_name.nMaxFile = MAX_PATH*2;  
+                        open_file_name.lpstrFilter = TEXT("Excel 表格数据(*.*)\0*.xls\0Excel 2007(*.xlsx)\0*.xlsx\0\0");  
+                        open_file_name.nFilterIndex = 1;  
+                        open_file_name.lpstrFileTitle = 0;  
+                        open_file_name.nMaxFileTitle = 0;  
+                        open_file_name.lpstrInitialDir = 0;  
+                        open_file_name.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST;  
+                        //ofn.lpTemplateName =  MAKEINTRESOURCE(ID_TEMP_DIALOG);  
+
+                        // 显示打开选择文件对话框。  
+                        if (GetOpenFileName(&open_file_name))  
+                        {  
+                            unsigned char* pibuf = NULL;
+                            unsigned int len = 0;
+                            if ( ReadFromFile(lpfile, &pibuf, &len) )
+                            {
+                                Book tmpbook;
+                                if (ImportFromXls((char*)pibuf, len, tmpbook)> 0)
+                                {
+                                    // 加载正常，保存到数据库中 
+                                    SaveFile2Database(lpfile);
+                                    // 已经成功保存数据，是否加载新数据? 
+                                    if (MessageBox(hWnd, TEXT("已成功保存数据，是否加载新数据?"), TEXT("提示"), MB_YESNO|MB_ICONASTERISK) == IDYES)
+                                    {
+                                        CloseHandle(CreateThread(NULL, 0, InitDataThread, NULL, 0, NULL));
+                                        SetWindowText(gFrame.hStatusWnd, TEXT("正在加载数据..."));
+                                    }
+                                }
+                                FreeData(pibuf);
+                            }
+                        } 
+                        delete []lpfile;
                     }
                 }
                 break;
@@ -394,6 +462,7 @@ INT_PTR CALLBACK ProcWinMain(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
                 swprintf(lpTmp, TEXT("选择表(%u/%u)"), nCount, nCount);
                 SetWindowText(gFrame.hSelectGroupWnd, lpTmp);
             }
+            SetWindowText(gFrame.hStatusWnd, TEXT("数据加载完成!"));
         }
         break;
     default:

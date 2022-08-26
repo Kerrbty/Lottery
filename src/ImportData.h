@@ -30,7 +30,8 @@ typedef struct _ExcelData{
 
     // 结果表，几张表中共同有的数据在第一张表中的索引 
     unsigned int uiShowItems[SHOWITEMS+1]; 
-    unsigned int nShowItemCount;
+    unsigned int nShowItemCount;   // 结果中可以显示的总项目数 
+    DWORD dwResultCount;  // 结果选择显示的项目数   
     BYTE bShowItems[SHOWITEMS+1];
     LPTSTR lpStatusTxt;
 }ExcelData, *pExcelData;

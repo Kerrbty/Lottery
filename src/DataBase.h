@@ -19,7 +19,6 @@ BOOL ReadDatabase(unsigned char** pb, unsigned int* size);
 VOID FreeData(void* pb);
 
 
-
 #ifdef _cplusplus
 };
 #endif // _cplusplus

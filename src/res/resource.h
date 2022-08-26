@@ -35,6 +35,7 @@
 #define IDC_BOOK_COUNT9                 1118
 #define IDC_TEXT_BOOK10                 1119
 #define IDC_BOOK_COUNT10                1120
+#define IDC_RESULT_SELECT               1200
 #define IDC_SHOW_ITEM1                  1201
 #define IDC_SHOW_ITEM2                  1202
 #define IDC_SHOW_ITEM3                  1203
@@ -55,19 +56,18 @@
 #define IDC_SHOW_ITEM18                 1218
 #define IDC_ROUND_COUNT                 1301
 #define IDC_EXTRACT                     1302
-#define IDC_IMPORT_DATA                 1401
-#define IDC_SELECT_REPEAT               1402
-#define IDC_TOP_MOST                    1403
-#define IDC_TEXT_MSG                    1404
-#define WM_UPDATE_DLG                   (WM_USER+100)
-
+#define IDC_TEXT_MSG                    1401
+#define IDC_SELECT_REPEAT               1501
+#define IDC_TOP_MOST                    1502
+#define IDC_IMPORT_DATA                 1503
+#define WM_UPDATE_DLG                   (WM_USER + 100)
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        104
 #define _APS_NEXT_COMMAND_VALUE         40001
-#define _APS_NEXT_CONTROL_VALUE         1012
+#define _APS_NEXT_CONTROL_VALUE         1013
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif
