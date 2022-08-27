@@ -214,7 +214,7 @@ LPTSTR GetStatusText()
 {
     if (gData.lpStatusTxt == NULL)
     {
-        gData.lpStatusTxt = new TCHAR[512];
+        gData.lpStatusTxt = new TCHAR[MAX_PATH*2];
     }
     return gData.lpStatusTxt;
 }

@@ -63,6 +63,7 @@
 #define WM_UPDATE_DLG                   (WM_USER + 100)
 
 #define IDD_RESULT_DLG                  301
+#define IDC_GROUP_TEXT                  1600
 #define IDC_PREVIOUS                    1601
 #define IDC_RESULT_LIST                 1602
 #define IDC_NEXT                        1603

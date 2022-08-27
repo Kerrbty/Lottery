@@ -183,11 +183,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Lottery.cpp"
+				RelativePath=".\LotteryDlg.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\Main.cpp"
+				RelativePath=".\SettingDlg.cpp"
 				>
 			</File>
 		</Filter>
@@ -209,11 +209,15 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Lottery.h"
+				RelativePath=".\LotteryDlg.h"
 				>
 			</File>
 			<File
 				RelativePath=".\res\resource.h"
+				>
+			</File>
+			<File
+				RelativePath=".\SettingDlg.h"
 				>
 			</File>
 		</Filter>

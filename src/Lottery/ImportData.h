@@ -3,7 +3,8 @@
 #include <string>
 #include <vector>
 
-#define SHOWITEMS   18
+#define SHOWITEMS   18    // 结果显示的选项 
+#define MAX_BOOKS   10    // 抽取的表 
 
 #ifdef _UNICODE
 #define _tstring std::wstring
@@ -12,8 +13,8 @@
 #endif // _UNICODE 
 
 // 读取出来的excel表格结构 
-typedef std::vector<_tstring> Elements;
-typedef std::vector<Elements> BookLines;
+typedef std::vector<_tstring> Elements;  // 一行数据 
+typedef std::vector<Elements> BookLines;  // 一页数据 
 typedef struct _BookInfo{
     _tstring name;
     BookLines lines; 
@@ -23,8 +24,8 @@ typedef std::vector<BookInfo> Book;
 typedef struct _ExcelData{
     LPTSTR lpExePath;
     Book book;
-    BYTE bSelect[10];   // 选择表 
-    DWORD ulBookCount[10];  // 每次从表中选择的人数 
+    BYTE bSelect[MAX_BOOKS];   // 选择表 
+    DWORD ulBookCount[MAX_BOOKS];  // 每次从表中选择的人数 
     DWORD ulRoundCount;  // 总抽取次数 
     BOOL bRepeatRount;   // 是否可以重复抽取 
 

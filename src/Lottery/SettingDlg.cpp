@@ -1,33 +1,18 @@
+#include "SettingDlg.h"
 #include "./res/resource.h"
-#include <Windows.h>
-#include <tchar.h>
-#include <algorithm>
 #include "Config.h"
 #include "DataBase.h"
-#include "ImportData.h"
+#include "LotteryDlg.h"
+#include <time.h>
+#include <algorithm>
+#define WM_UPDATE_DLG (WM_USER+100)
 
-#define USE_SKIN   0
+#define USE_SKIN   1
 #if USE_SKIN
 #include "SkinH/SkinH.h"
 #pragma comment(lib, "SkinH/SkinH.lib")
 #endif
 #pragma comment(lib, "comctl32.lib")
-
-typedef struct {
-    HINSTANCE hInstance; 
-    HWND hMainWnd;
-
-    HWND hSelectGroupWnd;  // 选择表格页文本 
-    HWND hBookWnd[10];     // 各表格选择框 
-    HWND hBookSetTextWnd[10];   // 各表格数量框前面的文本 
-    HWND hBookSetCountWnd[10];  // 各表格数量选择框 
-    HWND hResultSelectGroupWnd;  // 结果列表选择宽文本 
-    HWND hBookShowItemWnd[SHOWITEMS];  // 结果显示列 
-    HWND hRoundCountWnd;   // 总选择组数 
-
-    HWND hTopMoustWnd;  // 顶端显示选项 
-    HWND hStatusWnd;  // 状态提示信息 
-}WndFrame;
 
 WndFrame gFrame;
 ExcelData gData;
@@ -113,7 +98,7 @@ INT_PTR CALLBACK ProcWinMain(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
             SetClassLong( hWnd, GCL_HICON, (LONG)hIcon );
 
             gFrame.hSelectGroupWnd = GetDlgItem(hWnd, IDC_SELECT_BOOK);
-            for (unsigned int i=0; i<10; i++)
+            for (unsigned int i=0; i<MAX_BOOKS; i++)
             {
                 gFrame.hBookWnd[i] = GetDlgItem(hWnd, IDC_BOOK1+i);
                 ShowWindow(gFrame.hBookWnd[i], FALSE);
@@ -183,7 +168,7 @@ INT_PTR CALLBACK ProcWinMain(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
                     }
 
                     unsigned int nCount = 0;
-                    for (int i=0; i<10; i++)
+                    for (int i=0; i<MAX_BOOKS; i++)
                     {
                         if (gData.bSelect[i])
                         {
@@ -274,7 +259,7 @@ INT_PTR CALLBACK ProcWinMain(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
                     else
                     {
                         // 每个表中一次抽取多少人? 
-                        for (int i=0; i<10; i++)
+                        for (int i=0; i<MAX_BOOKS; i++)
                         {
                             if (gData.bSelect[i])
                             {
@@ -331,6 +316,9 @@ INT_PTR CALLBACK ProcWinMain(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
                     if (!bStopLottery)
                     {
                         // 抽奖 
+                        SetWindowText(gFrame.hStatusWnd, TEXT("正在生成结果，请稍后..."));
+                        LotteryData(NULL);
+                        SetWindowText(gFrame.hStatusWnd, TEXT("完成!"));
                     }
                 }
                 break;
@@ -401,10 +389,10 @@ INT_PTR CALLBACK ProcWinMain(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
             if (lpTmp)
             {
                 int nCount = gData.book.size();
-                // 最大数据量10个 
-                if (nCount>10)
+                // 最大数据量 MAX_BOOKS 个 
+                if (nCount>MAX_BOOKS)
                 {
-                    nCount = 10;
+                    nCount = MAX_BOOKS;
                 }
                 // 设置数据 
                 for (int i=0; i<nCount; i++)
@@ -452,7 +440,7 @@ INT_PTR CALLBACK ProcWinMain(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
                 }
 
                 // 隐藏其他 
-                for (int i=nCount; i<10; i++)
+                for (int i=nCount; i<MAX_BOOKS; i++)
                 {
                     gData.bSelect[i] = FALSE;
                     ShowWindow(gFrame.hBookWnd[i], SW_HIDE);
@@ -479,6 +467,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
     SkinH_Attach();
 #endif
 
+    srand(time(NULL));
     gFrame.hInstance = hInstance;
     //显示窗口
     DialogBoxParam(hInstance, MAKEINTRESOURCE(CONDIG_DIALOG), NULL, (DLGPROC)ProcWinMain, NULL);
