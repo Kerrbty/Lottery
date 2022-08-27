@@ -110,7 +110,22 @@ static unsigned int GetBookDatas(BookHandle ByReadXlsBook, int index, BookInfo &
             case CELLTYPE_NUMBER:
                 {
                     double num = xlSheetReadNum(sheet, i, j, NULL);
-                    _stprintf(data, TEXT("%lf"), num);
+                    int nLen = _stprintf(data, TEXT("%.02lf"), num);
+                    for (int i=nLen-1; i>0; i--)
+                    {
+                        if (data[i] == TEXT('0'))
+                        {
+                            data[i] = TEXT('\0');
+                        }
+                        else
+                        {
+                            if (data[i] == TEXT('.'))
+                            {
+                                data[i] = TEXT('\0');
+                            }
+                            break;
+                        }
+                    }
                     szName = data;
                 }
                 break;

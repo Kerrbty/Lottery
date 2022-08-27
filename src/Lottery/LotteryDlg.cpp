@@ -264,7 +264,7 @@ static INT_PTR CALLBACK ResultWndProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM
                     // 先找到表格内的数据索引 
                     int nRowCount = 0;
                     int nRowValue[SHOWITEMS] = {0};
-                    for (nRowCount=0; nRowCount<gData.dwResultCount; nRowCount++)
+                    for (nRowCount=0; nRowCount<=gData.dwResultCount; nRowCount++)
                     {
                         if (gLottery.dwShow[nRowCount].length() == 0)
                         {
