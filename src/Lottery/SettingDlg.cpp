@@ -377,12 +377,12 @@ INT_PTR CALLBACK ProcWinMain(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
             if (GetConfig(TEXT("TopMost")) == 1)
             {
                 SetWindowPos(hWnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOSIZE|SWP_NOMOVE);
-                SendMessage((HWND)GetDlgItem(hWnd, IDC_TOP_MOST), BM_SETCHECK, 1, 0);
+                SendMessage((HWND)GetDlgItem(hWnd, IDC_TOP_MOST), BM_SETCHECK, BST_CHECKED, 0);
             }
             if (GetConfig(TEXT("RepeatLottery")) == 1)
             {
                 gData.bRepeatRount = TRUE;
-                SendMessage((HWND)GetDlgItem(hWnd, IDC_SELECT_REPEAT), BM_SETCHECK, 1, 0);
+                SendMessage((HWND)GetDlgItem(hWnd, IDC_SELECT_REPEAT), BM_SETCHECK, BST_CHECKED, 0);
             }
 
             LPTSTR lpTmp = GetStatusText();
@@ -406,6 +406,8 @@ INT_PTR CALLBACK ProcWinMain(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
                     SetWindowText(gFrame.hBookWnd[i], gData.book[i].name.c_str());
                     SendMessage(gFrame.hBookWnd[i], BM_SETCHECK, BST_CHECKED, 0); // Button_SetCheck(gFrame.hBookWnd[i], BST_CHECKED); 
                     SetWindowText(gFrame.hBookSetTextWnd[i], gData.book[i].name.c_str());
+                    EnableWindow(gFrame.hBookSetTextWnd[i], TRUE);
+                    EnableWindow(gFrame.hBookSetCountWnd[i], TRUE);
 
                     // 清空 
                     while(SendMessage(gFrame.hBookSetCountWnd[i], LB_GETCOUNT, 0, 0))
@@ -427,6 +429,7 @@ INT_PTR CALLBACK ProcWinMain(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
                 Elements* FirstBookTitle = &gData.book[0].lines[0];
                 for (int i=0; i<SHOWITEMS; i++)
                 {
+                    SendMessage(gFrame.hBookShowItemWnd[i], BM_SETCHECK, BST_UNCHECKED, 0); // 结果展示全部未选择 
                     if (i >= gData.nShowItemCount)
                     {
                         ShowWindow(gFrame.hBookShowItemWnd[i], SW_HIDE);
@@ -436,8 +439,9 @@ INT_PTR CALLBACK ProcWinMain(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
                         ShowWindow(gFrame.hBookShowItemWnd[i], SW_SHOW);
                         SetWindowText(gFrame.hBookShowItemWnd[i], (*FirstBookTitle)[gData.uiShowItems[i]].c_str());
                     }
-                    
                 }
+                swprintf(lpTmp, TEXT("结果展示(%u)"), gData.dwResultCount);
+                SetWindowText(gFrame.hResultSelectGroupWnd, lpTmp);
 
                 // 隐藏其他 
                 for (int i=nCount; i<MAX_BOOKS; i++)
