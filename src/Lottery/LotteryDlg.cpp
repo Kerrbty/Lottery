@@ -159,6 +159,8 @@ static INT_PTR CALLBACK ResultWndProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM
                     }
                 }
             }
+
+            EnableWindow(GetDlgItem(hWnd, IDC_OUTPUT), FALSE);
             CloseHandle(CreateThread(NULL, 0, LotteryAllData, NULL, 0, NULL));
         }
         break;
