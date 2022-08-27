@@ -207,7 +207,7 @@ static INT_PTR CALLBACK ResultWndProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM
                             }
                         }
                     }
-                    CloseHandle(CreateThread(NULL, 0, LotteryAllData, NULL, 0, NULL));
+                    LotteryAllData(NULL);
                 }
                 break;
             case IDC_OUTPUT:  // 导出结果 
