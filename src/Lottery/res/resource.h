@@ -3,7 +3,7 @@
 // Used by Lottery.rc
 //
 #define CONDIG_DIALOG                   101
-#define IDI_MAINICON                    105
+#define IDI_MAINICON                    201
 #define IDC_SELECT_BOOK                 1000
 #define IDC_BOOK1                       1001
 #define IDC_BOOK2                       1002
@@ -61,13 +61,22 @@
 #define IDC_TOP_MOST                    1502
 #define IDC_IMPORT_DATA                 1503
 #define WM_UPDATE_DLG                   (WM_USER + 100)
+
+#define IDD_RESULT_DLG                  301
+#define IDC_PREVIOUS                    1601
+#define IDC_RESULT_LIST                 1602
+#define IDC_NEXT                        1603
+#define IDC_RESET                       1604
+#define IDC_OUTPUT                      1605
+#define IDC_TOPMOST                     1606
+
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        104
 #define _APS_NEXT_COMMAND_VALUE         40001
-#define _APS_NEXT_CONTROL_VALUE         1013
+#define _APS_NEXT_CONTROL_VALUE         1701
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif

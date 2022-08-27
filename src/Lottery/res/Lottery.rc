@@ -130,6 +130,36 @@ BEGIN
     PUSHBUTTON      "导入新表格",IDC_IMPORT_DATA,259,184,49,15
 END
 
+IDD_RESULT_DLG DIALOGEX 0, 0, 320, 257
+STYLE DS_SETFONT | WS_POPUP | WS_CAPTION | WS_SYSMENU | WS_THICKFRAME
+CAPTION "抽签结果"
+FONT 16, "黑体", 700, 0, 0x86
+BEGIN
+    LTEXT           "第 1/5 组",IDC_STATIC,139,9,49,11
+    PUSHBUTTON      "上一个",IDC_PREVIOUS,6,22,29,197,BS_CENTER | BS_VCENTER
+    CONTROL         "",IDC_RESULT_LIST,"SysListView32",LVS_ALIGNLEFT | WS_BORDER | WS_TABSTOP,37,23,244,196
+    DEFPUSHBUTTON   "下一个",IDC_NEXT,283,23,30,196
+    PUSHBUTTON      "重新生成",IDC_RESET,59,229,68,22
+    PUSHBUTTON      "导出结果",IDC_OUTPUT,192,230,68,22
+    CONTROL         "置于顶端",IDC_TOPMOST,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,280,246,38,10
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO 
+BEGIN
+    IDD_RESULT_DLG, DIALOG
+    BEGIN
+        RIGHTMARGIN, 319
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
 #endif    // 中文(中华人民共和国) resources
 /////////////////////////////////////////////////////////////////////////////
 
