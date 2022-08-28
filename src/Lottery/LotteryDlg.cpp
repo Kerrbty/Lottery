@@ -220,14 +220,15 @@ static INT_PTR CALLBACK ResultWndProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM
                     {
                         SetWindowPos(hWnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOSIZE|SWP_NOMOVE);
                         SetConfig(TEXT("TopMost"), 1);
-                        SendMessage(gFrame.hTopMoustWnd, BM_SETCHECK, 1, 0);
+                        SendMessage(gFrame.hTopMoustWnd, BM_SETCHECK, BST_CHECKED, 0);
                     }
                     else
                     {
                         SetWindowPos(hWnd, HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOSIZE|SWP_NOMOVE);
                         SetConfig(TEXT("TopMost"), 0);
-                        SendMessage(gFrame.hTopMoustWnd, BM_SETCHECK, 1, 0);
+                        SendMessage(gFrame.hTopMoustWnd, BM_SETCHECK, BST_UNCHECKED, 0);
                     }
+                    SendMessage(gFrame.hMainWnd, WM_COMMAND, IDC_TOP_MOST, 0);
                 }
                 break;
             }

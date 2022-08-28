@@ -194,6 +194,10 @@
 				RelativePath=".\res\Launcher.rc"
 				>
 			</File>
+			<File
+				RelativePath=".\res\Lottery.ico"
+				>
+			</File>
 		</Filter>
 	</Files>
 	<Globals>
